@@ -4,7 +4,7 @@ import { useAtom } from 'jotai'
 import { favouritesAtom } from '../store.js'
 
 export default function Favourites() {
-   const [favouritesList, setFavouritesList] = useAtom(favouritesAtom)
+   const [favouritesList] = useAtom(favouritesAtom)
 
    if (favouritesList) {
       return (

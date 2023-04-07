@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import { Card, ListGroup,Button } from 'react-bootstrap'
 import styles from '@/styles/History.module.css'
 
+import { removeFromHistory } from '@/lib/userData.js';
+
 export default function History() {
    const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom)
    const router = useRouter();
@@ -19,13 +21,9 @@ export default function History() {
       router.push(`//artwork?${searchHistory[index]}`);
    }
 
-   function removeHistoryClicked(e, index) {
+   async function removeHistoryClicked(e, index) {
       e.stopPropagation();
-      setSearchHistory(current => {
-         let x = [...current];
-         x.splice(index, 1)
-         return x;
-      });
+      setSearchHistory(await removeFromHistory(searchHistory[index]));
    }
    
    return (

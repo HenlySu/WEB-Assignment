@@ -4,24 +4,28 @@ import useSWR from 'swr';
 import { useAtom } from 'jotai';
 import { useState } from 'react';
 import { favouritesAtom } from '@/store';
+import { removeFromFavourites } from '@/lib/userData';
 
 export default function ArtworkCardDetail({objectID}){
    
-   const [favouritesList, setFavouritesList] = useAtom(favouritesAtom)
-   const [showAdded, setShowAdded] = useState(favouritesList.includes(objectID))
+   const [favouritesList, setFavouritesList] = useAtom(favouritesAtom);
+   const [showAdded, setShowAdded] = useState(false);
+   const { data, error } = useSWR(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
 
 
-    function favouritesClicked() {
+   async function favouritesClicked() {
       if (showAdded) {
-         setFavouritesList(current => current.filter(fav => fav != objectID));
+         setFavouritesList(await removeFromFavourites(objectID));
          setShowAdded(false)
       } else {
-         setFavouritesList(current => [...current, objectID]);
+         setFavouritesList(await addToFavourites(objectID));
          setShowAdded(true)
       }
    }
    
-   const { data, error } = useSWR(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
+   useEffect(()=>{
+      setShowAdded(favouritesList?.includes(objectID))
+   }, [favouritesList])
 
    if(error){
       return(
